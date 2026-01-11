@@ -176,7 +176,7 @@ export default function SettingsAbout() {
 
   return (
     <ScrollView
-      contentContainerStyle={{ padding: 20, gap: 20 }}
+      contentContainerStyle={{ padding: 20, gap: 10 }}
       contentInsetAdjustmentBehavior="always"
       showsVerticalScrollIndicator={false}
     >
