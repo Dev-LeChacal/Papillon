@@ -14,7 +14,7 @@ import Typography from "@/ui/components/Typography";
 import { getInitials } from "@/utils/chats/initials";
 import { Contributor, getContributors } from "@/utils/github/contributors";
 
-export const Teams = [
+export const Team = [
   {
     title: "Vince Linise",
     description: "Président",
@@ -63,7 +63,6 @@ import { useSettingsStore } from "@/stores/settings";
 
 export default function SettingsAbout() {
   const theme = useTheme()
-  const { colors } = theme
 
   const { t } = useTranslation();
   const settingsStore = useSettingsStore(state => state.personalization);
@@ -71,7 +70,7 @@ export default function SettingsAbout() {
 
   const [contributors, setContributors] = useState<Contributor[]>([])
   const fetchContributors = async () => {
-    const fethedContributors = (await getContributors()).filter(contrib => !Teams.map(item => item.login).includes(contrib.login))
+    const fethedContributors = (await getContributors()).filter(contrib => !Team.map(item => item.login).includes(contrib.login))
     setContributors(fethedContributors)
   }
 
@@ -79,7 +78,7 @@ export default function SettingsAbout() {
     fetchContributors()
   }, [])
 
-  const Items = [
+  const CommunityLinks = [
     {
       title: t("Settings_Donator"),
       description: t("Settings_Donator_Description"),
@@ -93,6 +92,15 @@ export default function SettingsAbout() {
       onPress: () => Linking.openURL('https://go.papillon.bzh/discord'),
     },
     {
+      title: t("Settings_About_Issue"),
+      description: t("Settings_About_Issue_Description"),
+      leading: <Papicons name="Info" />,
+      onPress: () => Linking.openURL('https://github.com/PapillonApp/Papillon/issues'),
+    },
+  ];
+
+  const DevelopperLinks = [
+    {
       title: t("Settings_About_Crowdin"),
       description: t("Settings_About_Crowdin_Description"),
       leading: <Papicons name="Crown" />,
@@ -103,6 +111,40 @@ export default function SettingsAbout() {
       description: t("Settings_About_Github_Description"),
       leading: <Papicons name="Ghost" />,
       onPress: () => Linking.openURL('https://github.com/PapillonApp/Papillon'),
+    },
+    {
+      title: t("Settings_About_Documentation"),
+      description: t("Settings_About_Documentation_Description"),
+      leading: <Papicons name="Paper" />,
+      onPress: () => Linking.openURL('https://docs.papillon.bzh'),
+    },
+  ];
+
+  const SocialLinks = [
+    {
+      title: "X (Twitter)",
+      leading: <Papicons name="Link" />,
+      onPress: () => Linking.openURL('https://x.com/thepapillonapp'),
+    },
+    {
+      title: "Instagram",
+      leading: <Papicons name="Link" />,
+      onPress: () => Linking.openURL('https://www.instagram.com/thepapillonapp'),
+    },
+    {
+      title: "Tiktok",
+      leading: <Papicons name="Link" />,
+      onPress: () => Linking.openURL('https://tiktok.com/@thepapillonapp'),
+    },
+    {
+      title: "Youtube",
+      leading: <Papicons name="Link" />,
+      onPress: () => Linking.openURL('https://youtube.com/@thepapillonapp'),
+    },
+    {
+      title: "LinkedIn",
+      leading: <Papicons name="Link" />,
+      onPress: () => Linking.openURL('https://fr.linkedin.com/company/papillonbzh'),
     },
   ];
 
@@ -142,6 +184,7 @@ export default function SettingsAbout() {
     <ScrollView
       contentContainerStyle={{ padding: 20, gap: 20 }}
       contentInsetAdjustmentBehavior="always"
+      showsVerticalScrollIndicator={false}
     >
       <SettingsHeader
         color={theme.dark ? "#121e2a" : "#dfebf7"}
@@ -153,7 +196,7 @@ export default function SettingsAbout() {
       />
 
       <List>
-        {Teams.map((item, index) => (
+        {Team.map((item, index) => (
           <Item
             key={index}
             onPress={item.onPress}
@@ -163,12 +206,15 @@ export default function SettingsAbout() {
                 {item.leading}
               </Icon>
             </Leading>
+
             <Typography variant="title">
               {item.title}
             </Typography>
+
             <Typography variant="caption" color="secondary">
               {item.description}
             </Typography>
+
             <Trailing>
               <Icon>
                 <Papicons name="ChevronRight" />
@@ -179,7 +225,7 @@ export default function SettingsAbout() {
       </List>
 
       <List>
-        {Items.map((item, index) => (
+        {CommunityLinks.map((item, index) => (
           <Item
             key={index}
             onPress={item.onPress}
@@ -189,12 +235,69 @@ export default function SettingsAbout() {
                 {item.leading}
               </Icon>
             </Leading>
+
             <Typography variant="title">
               {item.title}
             </Typography>
+
             <Typography variant="caption" color="secondary">
               {item.description}
             </Typography>
+
+            <Trailing>
+              <Icon>
+                <Papicons name="ChevronRight" />
+              </Icon>
+            </Trailing>
+          </Item>
+        ))}
+      </List>
+
+      <List>
+        {DevelopperLinks.map((item, index) => (
+          <Item
+            key={index}
+            onPress={item.onPress}
+          >
+            <Leading>
+              <Icon>
+                {item.leading}
+              </Icon>
+            </Leading>
+
+            <Typography variant="title">
+              {item.title}
+            </Typography>
+
+            <Typography variant="caption" color="secondary">
+              {item.description}
+            </Typography>
+
+            <Trailing>
+              <Icon>
+                <Papicons name="ChevronRight" />
+              </Icon>
+            </Trailing>
+          </Item>
+        ))}
+      </List>
+
+      <List>
+        {SocialLinks.map((item, index) => (
+          <Item
+            key={index}
+            onPress={item.onPress}
+          >
+            <Leading>
+              <Icon>
+                {item.leading}
+              </Icon>
+            </Leading>
+
+            <Typography variant="title">
+              {item.title}
+            </Typography>
+
             <Trailing>
               <Icon>
                 <Papicons name="ChevronRight" />
@@ -210,6 +313,7 @@ export default function SettingsAbout() {
             <Leading>
               <Avatar size={40} shape="square" initials={getInitials(item.login)} imageUrl={item.avatar_url} />
             </Leading>
+
             <Typography>{item.login}</Typography>
             <Typography color="secondary">{item.contributions} contributions</Typography>
           </Item>
@@ -227,9 +331,11 @@ export default function SettingsAbout() {
                 {item.leading}
               </Icon>
             </Leading>
+
             <Typography variant="title">
               {item.title}
             </Typography>
+
             <Typography variant="caption" color="secondary">
               {item.description}
             </Typography>
