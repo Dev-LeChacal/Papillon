@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { SectionList, StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import Reanimated from 'react-native-reanimated';
 import { useHomeworkData } from '../../tasks/hooks/useHomeworkData';
-import { HomeworkSection, useTaskFilters } from '../../tasks/hooks/useTaskFilters';
+import { useTaskFilters } from '../../tasks/hooks/useTaskFilters';
 import { useWeekSelection } from '../../tasks/hooks/useWeekSelection';
 
 import { useAlert } from "@/ui/components/AlertProvider";
@@ -15,6 +15,7 @@ import TaskItem from '../../tasks/components/TaskItem';
 import Typography from '@/ui/components/Typography';
 import { t } from 'i18next';
 import Stack from '@/ui/components/Stack';
+import { LegendList } from '@legendapp/list';
 
 const HomeTasksWidget = React.memo(() => {
     const alert = useAlert();
@@ -34,12 +35,7 @@ const HomeTasksWidget = React.memo(() => {
     } = useTaskFilters(homeworksFromCache, homework);
 
     const renderItem = useCallback(
-        ({ item, index, section }: { item: Homework, index: number, section: HomeworkSection }) => {
-            if (sortMethod === 'date' && collapsedGroups.includes(section.id)) {
-                return null;
-            }
-
-            // Generate the same ID used to store homeworks in the homework object
+        ({ item, index }: { item: Homework, index: number }) => {
             const generatedId = generateId(
                 item.subject + item.content + item.createdByAccount + new Date(item.dueDate).toDateString()
             );
@@ -53,6 +49,9 @@ const HomeTasksWidget = React.memo(() => {
                     layout={LinearTransition}
                     entering={PapillonAppearIn}
                     exiting={PapillonAppearOut}
+                    style={{
+                        maxWidth: 300
+                    }}
                 >
                     <TaskItem
                         item={source}
@@ -68,16 +67,15 @@ const HomeTasksWidget = React.memo(() => {
         [homework, setAsDone, collapsedGroups, sortMethod]
     );
 
-    const limitedSections = sections.slice(0, 1).map(section => ({
-        ...section,
-        data: section.data.slice(0, 2)
-    }));
+    const limitedData = sections
+        .slice(selectedWeek - 1, selectedWeek)
+        .flatMap(section => section.data.slice(0, 5));
 
     const keyExtractor = useCallback((item: Homework) => {
         return "hw:" + item.subject + item.content + item.createdByAccount + new Date(item.dueDate).toDateString();
     }, []);
 
-    if (limitedSections.length == 0) {
+    if (limitedData.length === 0) {
         return (
             <Stack
                 inline flex
@@ -98,20 +96,22 @@ const HomeTasksWidget = React.memo(() => {
     }
 
     return (
-        <SectionList
-            scrollEnabled={false}
-            sections={limitedSections}
+        <LegendList
+            horizontal
+            data={limitedData}
             style={styles.list}
-            contentContainerStyle={{ paddingHorizontal: 12 }}
+            contentContainerStyle={{ paddingLeft: 12, gap: 12 }}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
-            stickySectionHeadersEnabled={false}
+            showsHorizontalScrollIndicator={false}
         />
     );
 });
 
 const styles = StyleSheet.create({
     list: {
+        borderBottomRightRadius: 20,
+        borderBottomLeftRadius: 20,
         flex: 1,
         height: '100%',
     },
