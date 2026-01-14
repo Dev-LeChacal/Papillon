@@ -50,16 +50,14 @@ const HomeTasksWidget = React.memo(() => {
                     entering={PapillonAppearIn}
                     exiting={PapillonAppearOut}
                     style={{
-                        maxWidth: 320
+                        width: 320
                     }}
                 >
                     <TaskItem
                         item={source}
                         index={index}
                         fromCache={fromCache}
-                        setAsDone={(item, done) => {
-                            setAsDone(item, done);
-                        }}
+                        setAsDone={setAsDone}
                     />
                 </Reanimated.View>
             );
@@ -67,9 +65,22 @@ const HomeTasksWidget = React.memo(() => {
         [homework, setAsDone, collapsedGroups, sortMethod]
     );
 
-    const limitedData = sections
-        .slice(selectedWeek - 1, selectedWeek)
-        .flatMap(section => section.data.slice(0, 5));
+    const limitedData = React.useMemo(() => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const tomorrowSection = sections.find(section => {
+            if (!section.data.length) return false;
+
+            const sectionDate = new Date(section.data[0].dueDate);
+            sectionDate.setHours(0, 0, 0, 0);
+
+            return sectionDate.getTime() === tomorrow.getTime();
+        });
+
+        return tomorrowSection ? tomorrowSection.data.slice(0, 5) : [];
+    }, [sections]);
 
     const keyExtractor = useCallback((item: Homework) => {
         return "hw:" + item.subject + item.content + item.createdByAccount + new Date(item.dueDate).toDateString();
@@ -113,7 +124,7 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
         borderBottomLeftRadius: 20,
         flex: 1,
-        height: '100%',
+        height: "100%"
     },
 });
 
