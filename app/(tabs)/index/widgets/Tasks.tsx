@@ -29,8 +29,6 @@ const HomeTasksWidget = React.memo(() => {
     } = useHomeworkData(selectedWeek, alert);
 
     const {
-        sortMethod,
-        collapsedGroups,
         sections,
     } = useTaskFilters(homeworksFromCache, homework);
 
@@ -62,10 +60,10 @@ const HomeTasksWidget = React.memo(() => {
                 </Reanimated.View>
             );
         },
-        [homework, setAsDone, collapsedGroups, sortMethod]
+        [homework, setAsDone]
     );
 
-    const limitedData = React.useMemo(() => {
+    const data = React.useMemo(() => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
@@ -79,14 +77,14 @@ const HomeTasksWidget = React.memo(() => {
             return sectionDate.getTime() === tomorrow.getTime();
         });
 
-        return tomorrowSection ? tomorrowSection.data.slice(0, 5) : [];
+        return tomorrowSection ? tomorrowSection.data : [];
     }, [sections]);
 
     const keyExtractor = useCallback((item: Homework) => {
         return "hw:" + item.subject + item.content + item.createdByAccount + new Date(item.dueDate).toDateString();
     }, []);
 
-    if (limitedData.length === 0) {
+    if (data.length === 0) {
         return (
             <Stack
                 inline flex
@@ -109,11 +107,19 @@ const HomeTasksWidget = React.memo(() => {
     return (
         <LegendList
             horizontal
-            data={limitedData}
+            data={data}
+
             style={styles.list}
             contentContainerStyle={{ paddingLeft: 12, gap: 12 }}
+
             keyExtractor={keyExtractor}
             renderItem={renderItem}
+
+            recycleItems={true}
+            decelerationRate="normal"
+            disableIntervalMomentum={false}
+            estimatedItemSize={320}
+
             showsHorizontalScrollIndicator={false}
         />
     );

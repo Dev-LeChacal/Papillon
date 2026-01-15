@@ -39,20 +39,20 @@ const HomeScreen = () => {
 
   const data: HomeWidgetItem[] = useMemo(() => [
     {
-      icon: <Papicons name={"Grades"} />,
-      title: t("Latest_Grades"),
-      redirect: "(tabs)/grades",
-      render: renderGrades
-    },
-    {
       icon: <Papicons name={"Calendar"} />,
       title: t("Home_Widget_NextCourses"),
       redirect: "(tabs)/calendar",
       render: renderTimeTable
     },
     {
+      icon: <Papicons name={"Grades"} />,
+      title: t("Latest_Grades"),
+      redirect: "(tabs)/grades",
+      render: renderGrades
+    },
+    {
       icon: <Papicons name={"Tasks"} />,
-      title: t("Tab_Tasks"),
+      title: t("Home_Widget_NewHomeworks"),
       redirect: "(tabs)/tasks",
       render: renderTasks
     }
